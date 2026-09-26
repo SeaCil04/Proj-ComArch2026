@@ -81,4 +81,5 @@ public class Encoder {
         }
         return reg;
     }
+
 }
