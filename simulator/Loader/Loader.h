@@ -2,11 +2,11 @@
 #define LOADER_H
 
 #include <string>
-#include "CPU.h"
+#include "stateStruct.h"
 
 class Loader {
 public:
-    void loadProgram(const std::string& filename, CPU& cpu);
+    void loadProgram(const std::string& filename, stateStruct& state);
 };
 
 #endif

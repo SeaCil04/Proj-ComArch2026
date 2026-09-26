@@ -1,14 +1,36 @@
 #include "Loader.h"
 #include <fstream>
+#include <iostream>
+#include <sstream>
+#include <cstdlib>
 
-void Loader::loadProgram(const std::string& filename, CPU& cpu) {
+void Loader::loadProgram(const std::string& filename, stateStruct& state) {
     std::ifstream file(filename);
 
-    int value;
-    int address = 0;
+    if (!file.is_open()) {
+        std::cerr << "Error: cannot open file " << filename << std::endl;
+        std::exit(1);
+    }
 
-    while (file >> value && address < 65536) {
-        cpu.memory[address] = value;
-        address++;
+    std::string line;
+
+    while (std::getline(file, line)) {
+
+        if (state.numMemory >= 65536) {
+            std::cerr << "Error: program is too large" << std::endl;
+            std::exit(1);
+        }
+
+        std::stringstream ss(line);
+        int value;
+
+        if (!(ss >> value)) {
+            std::cerr << "Error in reading address "
+                      << state.numMemory << std::endl;
+            std::exit(1);
+        }
+
+        state.memory[state.numMemory] = value;
+        state.numMemory++;
     }
 }
