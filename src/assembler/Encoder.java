@@ -36,6 +36,7 @@ public class Encoder {
             case ".fill":
                 return encodeFill(ins, symTab);
             default:
+                // Should be unreachable - Parser already validates opcodes.
                 throw new AssemblerException(
                         "Unhandled opcode '" + ins.getOpcode() + "' at line " + ins.getLineNumber());
         }
@@ -49,24 +50,55 @@ public class Encoder {
         return (opcode << 22) | (regA << 19) | (regB << 16) | destReg;
     }
 
-    // เดี๋ยวมาต่อ
     private int encodeIType(InstructionLine ins, SymbolTable symTab) {
-
+        int opcode = OPCODES.get(ins.getOpcode());
+        int regA = parseRegister(ins.getArg(0), ins);
+        int regB = parseRegister(ins.getArg(1), ins);
+        int offset = resolveOffset(ins, symTab);
+        if (!isOffsetInRange(offset)) {
+            throw new AssemblerException(
+                    "Offset " + offset + " out of range (-32768 to 32767) at line " + ins.getLineNumber());
+        }
+        int offsetField = offset & 0xFFFF; // keep only the low 16 bits
+        return (opcode << 22) | (regA << 19) | (regB << 16) | offsetField;
     }
 
-    // เดี๋ยวมาต่อ
     private int encodeJType(InstructionLine ins) {
-
+        int opcode = OPCODES.get(ins.getOpcode());
+        int regA = parseRegister(ins.getArg(0), ins);
+        int regB = parseRegister(ins.getArg(1), ins);
+        return (opcode << 22) | (regA << 19) | (regB << 16);
     }
 
-    // เดี๋ยวมาต่อ
     private int encodeOType(InstructionLine ins) {
-
+        int opcode = OPCODES.get(ins.getOpcode());
+        return opcode << 22;
     }
 
-    // เดี๋ยวมาต่อ
     private int encodeFill(InstructionLine ins, SymbolTable symTab) {
+        String field = ins.getArg(0);
+        if (Parser.isNumber(field)) {
+            return Integer.parseInt(field);
+        }
+        // SymbolTable.getAddress() throws AssemblerException itself
+        // if the label is undefined - nothing more to do here.
+        return symTab.getAddress(field);
+    }
 
+    private int resolveOffset(InstructionLine ins, SymbolTable symTab) {
+        String field = ins.getArg(2);
+        if (Parser.isNumber(field)) {
+            return Integer.parseInt(field);
+        }
+        int labelAddress = symTab.getAddress(field); // throws if undefined
+        if (ins.getOpcode().equals("beq")) {
+            return labelAddress - (ins.getAddress() + 1);
+        }
+        return labelAddress;
+    }
+
+    public boolean isOffsetInRange(int offset) {
+        return offset >= -32768 && offset <= 32767;
     }
 
     private int parseRegister(String field, InstructionLine ins) {
@@ -81,5 +113,4 @@ public class Encoder {
         }
         return reg;
     }
-
 }
