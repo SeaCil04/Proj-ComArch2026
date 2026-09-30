@@ -1,8 +1,6 @@
 package assembler;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +36,8 @@ public class Assembler {
 
         readProgram(inputFile);
         pass1();
-        //pass2(outputFile);
+        pass2(outputFile);
+
     }
 
     private void readProgram(String inputFile) throws IOException {
@@ -79,6 +78,16 @@ public class Assembler {
 
             if (line.getLabel() != null) {
                 symbolTable.add(line.getLabel(), address);
+            }
+        }
+    }
+
+    private void pass2(String outputFile) throws IOException {
+        Encoder encoder = new Encoder();
+        try (PrintWriter writer = new PrintWriter(new FileWriter(outputFile))) {
+            for (Parser.InstructionLine line : program) {
+                int machineCode = encoder.encode(line, symbolTable);
+                writer.println(machineCode);
             }
         }
     }
