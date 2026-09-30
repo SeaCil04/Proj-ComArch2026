@@ -111,6 +111,7 @@ public class Encoder {
             throw new AssemblerException(
                     "Register " + reg + " out of range (0-7) at line " + ins.getLineNumber());
         }
+
         return reg;
     }
 }

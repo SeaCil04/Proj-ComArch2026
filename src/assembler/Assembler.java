@@ -37,6 +37,7 @@ public class Assembler {
         readProgram(inputFile);
         pass1();
         pass2(outputFile);
+
     }
 
     private void readProgram(String inputFile) throws IOException {

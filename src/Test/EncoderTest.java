@@ -31,6 +31,7 @@ class EncoderTest {
         assertEquals(expected, encoder.encode(ins, new SymbolTable()));
     }
 
+
     @Test
     void halt_encodesCorrectly() {
         InstructionLine ins = new InstructionLine(
