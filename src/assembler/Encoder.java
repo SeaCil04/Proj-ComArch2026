@@ -5,6 +5,9 @@ import java.util.Map;
 
 import assembler.Parser.InstructionLine;
 
+/**
+ * Handles encoding of parsed instruction lines into machine code representation.
+ */
 public class Encoder {
 
     private static final Map<String, Integer> OPCODES = new HashMap<>();
@@ -19,6 +22,17 @@ public class Encoder {
         OPCODES.put("noop", 7);
     }
 
+    /**
+     * Encodes a parsed assembly instruction line into its 32-bit machine code.
+     *
+     * Dispatches the instruction to the appropriate encoding method based on its opcode.
+     * Opcode validity is pre-validated during parsing.
+     *
+     * @param ins the parsed instruction line containing opcode, arguments, and line number
+     * @param symTab the symbol table used to resolve label addresses
+     * @return the 32-bit integer representing the encoded machine instruction or memory content
+     * @throws AssemblerException if a register is invalid, or an offset/immediate is out of range
+     */
     public int encode(InstructionLine ins, SymbolTable symTab) {
         switch (ins.getOpcode()) {
             case "add":
@@ -85,6 +99,18 @@ public class Encoder {
         return symTab.getAddress(field);
     }
 
+    /**
+     * Resolves the offset or target address for I-type instructions.
+     *
+     * Handles both immediate integer values and symbolic labels:
+     * - lw / sw: Resolves labels to absolute memory addresses.
+     * - beq: Resolves labels to PC-relative offsets computed as labelAddress - (currentPC + 1).
+     *
+     * @param ins the I-type instruction line
+     * @param symTab the symbol table to look up defined labels
+     * @return the calculated numeric offset or target address
+     * @throws AssemblerException if the target label is undefined in the symbol table
+     */
     private int resolveOffset(InstructionLine ins, SymbolTable symTab) {
         String field = ins.getArg(2);
         if (Parser.isNumber(field)) {
