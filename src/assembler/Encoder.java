@@ -5,6 +5,9 @@ import java.util.Map;
 
 import assembler.Parser.InstructionLine;
 
+/**
+ * Handles encoding of parsed instruction lines into machine code representation.
+ */
 public class Encoder {
 
     private static final Map<String, Integer> OPCODES = new HashMap<>();
@@ -20,9 +23,15 @@ public class Encoder {
     }
 
     /**
-     * Dispatches to the right encode* method based on opcode.
-     * NOTE: opcode is already guaranteed valid here because Parser.parse()
-     * rejects unknown opcodes at parse time - no need to re-check.
+     * Encodes a parsed assembly instruction line into its 32-bit machine code.
+     *
+     * Dispatches the instruction to the appropriate encoding method based on its opcode.
+     * Opcode validity is pre-validated during parsing.
+     *
+     * @param ins the parsed instruction line containing opcode, arguments, and line number
+     * @param symTab the symbol table used to resolve label addresses
+     * @return the 32-bit integer representing the encoded machine instruction or memory content
+     * @throws AssemblerException if a register is invalid, or an offset/immediate is out of range
      */
     public int encode(InstructionLine ins, SymbolTable symTab) {
         switch (ins.getOpcode()) {
@@ -91,9 +100,16 @@ public class Encoder {
     }
 
     /**
-     * field2 of an I-type instruction can be a plain number OR a label.
-     * - lw/sw: offsetField = absolute address of the label
-     * - beq:   offsetField = address of label - (address of this beq + 1)
+     * Resolves the offset or target address for I-type instructions.
+     *
+     * Handles both immediate integer values and symbolic labels:
+     * - lw / sw: Resolves labels to absolute memory addresses.
+     * - beq: Resolves labels to PC-relative offsets computed as labelAddress - (currentPC + 1).
+     *
+     * @param ins the I-type instruction line
+     * @param symTab the symbol table to look up defined labels
+     * @return the calculated numeric offset or target address
+     * @throws AssemblerException if the target label is undefined in the symbol table
      */
     private int resolveOffset(InstructionLine ins, SymbolTable symTab) {
         String field = ins.getArg(2);
