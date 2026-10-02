@@ -19,6 +19,11 @@ public class Encoder {
         OPCODES.put("noop", 7);
     }
 
+    /**
+     * Dispatches to the right encode* method based on opcode.
+     * NOTE: opcode is already guaranteed valid here because Parser.parse()
+     * rejects unknown opcodes at parse time - no need to re-check.
+     */
     public int encode(InstructionLine ins, SymbolTable symTab) {
         switch (ins.getOpcode()) {
             case "add":
@@ -85,6 +90,11 @@ public class Encoder {
         return symTab.getAddress(field);
     }
 
+    /**
+     * field2 of an I-type instruction can be a plain number OR a label.
+     * - lw/sw: offsetField = absolute address of the label
+     * - beq:   offsetField = address of label - (address of this beq + 1)
+     */
     private int resolveOffset(InstructionLine ins, SymbolTable symTab) {
         String field = ins.getArg(2);
         if (Parser.isNumber(field)) {
