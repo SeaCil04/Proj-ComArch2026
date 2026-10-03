@@ -11,13 +11,25 @@ bool Executor::execute(const Instruction& instruction, stateStruct& state) {
             state.pc++;
             break;
         case 2: // lw
-            state.registers[instruction.regB] = state.memory[state.registers[instruction.regA] + instruction.offset];
-            state.pc++;
-            break;
+            {
+                int address = state.registers[instruction.regA] + instruction.offset;
+                if (address < 0 || address >= NUMMEMORY) {
+                    return false; 
+                }
+                state.registers[instruction.regB] = state.memory[address];
+                state.pc++;
+                break;
+            }
         case 3: // sw
-            state.memory[state.registers[instruction.regA] + instruction.offset] = state.registers[instruction.regB];
-            state.pc++;
-            break;
+            {
+                int address = state.registers[instruction.regA] + instruction.offset;
+                if (address < 0 || address >= NUMMEMORY) {
+                    return false; 
+                }
+                state.memory[address] = state.registers[instruction.regB];
+                state.pc++;
+                break;
+            }
         case 4: // beq
             if (state.registers[instruction.regA] == state.registers[instruction.regB]) {
                 state.pc += instruction.offset + 1;
@@ -45,5 +57,6 @@ bool Executor::execute(const Instruction& instruction, stateStruct& state) {
             // Invalid opcode
             return false;
     }
+    state.registers[0] = 0;
     return true;
 }

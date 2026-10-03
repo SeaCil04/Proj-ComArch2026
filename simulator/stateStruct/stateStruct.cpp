@@ -3,11 +3,11 @@
 stateStruct::stateStruct() {
     pc = 0;
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < NUMREGS; i++) {
         registers[i] = 0;
     }
-    
-    for (int i = 0; i < 65536; i++) {
+
+    for (int i = 0; i < NUMMEMORY; i++) {
         memory[i] = 0;
     }
 

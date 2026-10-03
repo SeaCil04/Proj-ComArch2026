@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
         bool continueEx = executor.execute(instruction, state);
 
         if (!continueEx) {
-            printf("machine halted\ntaotal of %d instructions executed\nfinal state of machine:\n", totalInstructions);
+            printf("machine halted\ntotal of %d instructions executed\nfinal state of machine:\n", totalInstructions);
             break;
         }
     }

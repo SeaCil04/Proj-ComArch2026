@@ -16,7 +16,7 @@ void Loader::loadProgram(const std::string& filename, stateStruct& state) {
 
     while (std::getline(file, line)) {
 
-        if (state.numMemory >= 65536) {
+        if (state.numMemory >= NUMMEMORY) {
             std::cerr << "Error: program is too large" << std::endl;
             std::exit(1);
         }
