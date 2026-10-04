@@ -1,5 +1,6 @@
 #include "stateStruct.h"
 
+/* initialize pc, registers, and memory to zero */
 stateStruct::stateStruct() {
     pc = 0;
 

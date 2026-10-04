@@ -3,6 +3,7 @@
 
 #include "Instruction.h"
 
+/* instruction decoder class */
 class Decoder {
 public:
     Instruction decode(int machineCode);

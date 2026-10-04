@@ -4,6 +4,7 @@
 #include <string>
 #include "stateStruct.h"
 
+/* machine code loader class */
 class Loader {
 public:
     void loadProgram(const std::string& filename, stateStruct& state);
