@@ -1,9 +1,10 @@
-lw      0       5       pos1      ; เริ่มตัวชี้ Stack ที่ 1
+        lw      0       5       pos1      ; เริ่มตัวชี้ Stack ที่ 1
         lw      0       1       n
         lw      0       2       r
         lw      0       6       caddr
         jalr    6       7
         halt
+        
 comBi   lw      0       6       pos1      ; โหลด 1 สำหรับเพิ่มตัวชี้ Stack
         sw      5       7       stack     ; เก็บตำแหน่งกลับลง Stack
         add     5       6       5
